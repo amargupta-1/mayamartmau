@@ -1,42 +1,41 @@
 /* ============================================================
-   MAYA MART – app.js v7 (Independent Storefront Edition)
-   Connected to: TRIAL 001 -> 'mayamartmau.in' tab (14-Col Feed)
-   Features:
-   - Single-fetch live Google Sheet sync + manual Refresh button
-   - In-Stock First sorting (Out-of-Stock pushed to bottom)
-   - Blinkit-style Main Category -> Subcategory -> Marg Company Filter
-   - Selling Rate vs MRP comparison + savings badge + stock urgency
-   - Promotional Offer Banner Carousel + Min Home Delivery Notice
-   - Cart, Wishlist, Recently Viewed, Deep Links & WhatsApp Checkout
+   MAYA MART – app.js v8 (Blinkit Split-Pane + mayamart-images CDN)
+   Connected to:
+   - Google Sheet: TRIAL 001 -> 'mayamartmau.in' tab (14-Col Feed)
+   - Image Repo:   github.com/amargupta-1/mayamart-images (<Marg_ID>.webp)
    ============================================================ */
 
 'use strict';
 
 const CONFIG = {
-  SHEET_ID:           '1D_ksWAPlSRWVZgz3kaQi3-k8MygM-wxjZnkYLu1Dum0',
-  SHEET_NAME:         'mayamartmau.in',
-  WA_NUMBER:          '919278224984',
-  MIN_DELIVERY_ORDER: 299,
-  PAGE_SIZE:          40,
-  DEBOUNCE_MS:        280,
-  RECENT_MAX:         10,
-  STORE_NAME:         'Maya Mart',
-  CACHE_KEY:          'mm_products_v7',
-  CACHE_TTL:          15 * 60 * 1000, // 15 minutes
+  SHEET_ID:            '1D_ksWAPlSRWVZgz3kaQi3-k8MygM-wxjZnkYLu1Dum0',
+  SHEET_NAME:          'mayamartmau.in',
+  IMAGE_REPO_USER:     'amargupta-1',
+  IMAGE_REPO_NAME:     'mayamart-images',
+  IMAGE_REPO_BRANCH:   'main',
+  IMAGE_EXT:           '.webp',
+  WA_NUMBER:           '919278224984',
+  MIN_DELIVERY_ORDER:  299,
+  PAGE_SIZE:           40,
+  DEBOUNCE_MS:         260,
+  RECENT_MAX:          10,
+  STORE_NAME:          'Maya Mart',
+  CACHE_KEY:           'mm_products_v8',
+  CACHE_TTL:           15 * 60 * 1000, // 15 minutes
   EXCLUDED_CATEGORIES: ['UNCATEGORIZED STAGING', '-BLANK-', 'BLANK', '']
 };
 
 const MAIN_CAT_ICONS = {
   'GROCERY & KITCHEN':         ['🌾', '🌶️', '🫙', '🫘', '🍚', '🧂'],
-  'SNACKS & MUNCHIES':         ['🍿', '🥨', '🍪', '🥜', '🍘', '🧆'],
-  'SWEETS & CHOCOLATES':       ['🍫', '🍬', '🍭', '🧁', '🍩', '🍮'],
-  'DAIRY & BREAKFAST':         ['🥛', '🧈', '🧀', '🥣', '🍞', '🍯'],
-  'BREAKFAST & DAIRY':         ['🥛', '🧈', '🧀', '🥣', '🍞', '🍯'],
-  'BEVERAGES & TEA':           ['🍵', '☕', '🧃', '🥤', '🧋', '🍃'],
-  'PACKAGED & INSTANT FOOD':   ['🍜', '🍝', '🥫', '🍲', '🍛', '🍱'],
   'PERSONAL CARE':             ['🧼', '🧴', '🪥', '💇', '🌸', '✨'],
   'CLEANING & HOUSEHOLD':      ['🧹', '🫧', '🪣', '🧽', '🧴', '🧻'],
+  'SNACKS & MUNCHIES':         ['🍿', '🥨', '🍪', '🥜', '🍘', '🧆'],
   'POOJA NEEDS':               ['🪔', '🕯️', '🌺', '🕉️', '✨', '🥥'],
+  'BREAKFAST & BEVERAGES':     ['☕', '🍵', '🥛', '🥣', '🧃', '🍞'],
+  'DAIRY & BREAKFAST':         ['🥛', '🧈', '🧀', '🥣', '🍞', '🍯'],
+  'BEVERAGES & TEA':           ['🍵', '☕', '🧃', '🥤', '🧋', '🍃'],
+  'PACKAGED & INSTANT FOOD':   ['🍜', '🍝', '🥫', '🍲', '🍛', '🍱'],
+  'SWEETS & CHOCOLATES':       ['🍫', '🍬', '🍭', '🧁', '🍩', '🍮'],
   'HEALTH & WELLNESS':         ['💪', '🍯', '🌿', '💊', '🥗', '⚡'],
   'BABY CARE':                 ['👶', '🍼', '🧸', '🎀', '🛁', '🌸'],
   'ELECTRONICS & ELECTRICALS': ['🔋', '💡', '🔌', '🔦', '⚡', '🎧'],
@@ -44,10 +43,46 @@ const MAIN_CAT_ICONS = {
   'DEFAULT':                   ['🛒', '📦', '🏪', '🛍️', '🎁', '🧺']
 };
 
+const SUBCAT_KEYWORD_ICONS = [
+  { keys: ['ATTA', 'FLOUR', 'BESAN', 'SOOJI', 'MAIDA'], icon: '🌾' },
+  { keys: ['RICE', 'POHA', 'MURI'], icon: '🍚' },
+  { keys: ['DAL', 'PULSE', 'LEGUMES', 'CHANA', 'RAJMA'], icon: '🫘' },
+  { keys: ['OIL', 'GHEE', 'VANASPATI'], icon: '🫙' },
+  { keys: ['SPICE', 'MASALA', 'HALDI', 'MIRCH', 'SALT', 'JEERA'], icon: '🌶️' },
+  { keys: ['DRY FRUIT', 'ALMOND', 'CASHEW', 'KISMIS', 'NUT'], icon: '🥜' },
+  { keys: ['SUGAR', 'JAGGERY', 'GUD'], icon: '🍯' },
+  { keys: ['TEA', 'CHAI', 'COFFEE'], icon: '☕' },
+  { keys: ['JUICE', 'DRINK', 'SODA', 'BEVERAGE', 'SQUASH'], icon: '🧃' },
+  { keys: ['MILK', 'DAIRY', 'BUTTER', 'CHEESE', 'PANEER', 'CURD'], icon: '🥛' },
+  { keys: ['BISCUIT', 'COOKIE', 'RUSK', 'CAKE'], icon: '🍪' },
+  { keys: ['CHIPS', 'NAMKEEN', 'BHUJIA', 'SNACK', 'POPCORN'], icon: '🍿' },
+  { keys: ['NOODLE', 'PASTA', 'VERMICELLI', 'MACARONI'], icon: '🍜' },
+  { keys: ['SAUCE', 'KETCHUP', 'JAM', 'PICKLE', 'ACHAR', 'VINEGAR'], icon: '🥫' },
+  { keys: ['CHOCOLATE', 'CANDY', 'TOFFEE', 'SWEET', 'MITHAI'], icon: '🍫' },
+  { keys: ['SOAP', 'BODY WASH', 'HANDWASH'], icon: '🧼' },
+  { keys: ['SHAMPOO', 'HAIR', 'CONDITIONER'], icon: '💇' },
+  { keys: ['TOOTH', 'ORAL', 'BRUSH', 'PASTE'], icon: '🪥' },
+  { keys: ['CREAM', 'LOTION', 'FACE', 'SKIN', 'COSMETIC', 'POWDER', 'DEO', 'PERFUME'], icon: '🧴' },
+  { keys: ['DETERGENT', 'SURF', 'WASH', 'FABRIC'], icon: '🫧' },
+  { keys: ['CLEANER', 'PHENYL', 'HARPIC', 'LIZOL', 'DISH', 'VIM'], icon: '🧽' },
+  { keys: ['BROOM', 'JHADU', 'MOP', 'SCRUB', 'WIPER'], icon: '🧹' },
+  { keys: ['AGARBATTI', 'DHOOP', 'POOJA', 'CAMPHOR', 'DIYA', 'CANDLE'], icon: '🪔' },
+  { keys: ['BABY', 'DIAPER', 'WIPE'], icon: '👶' },
+  { keys: ['BATTERY', 'BULB', 'LED', 'ELECTRICAL'], icon: '🔋' }
+];
+
 function getCatIcon(cat) {
   const key = String(cat || '').toUpperCase().trim();
   const pool = MAIN_CAT_ICONS[key] || MAIN_CAT_ICONS['DEFAULT'];
   return pool[0];
+}
+
+function getSubcatIcon(subcat, mainCat) {
+  const upper = String(subcat || '').toUpperCase();
+  for (const entry of SUBCAT_KEYWORD_ICONS) {
+    if (entry.keys.some(k => upper.includes(k))) return entry.icon;
+  }
+  return getCatIcon(mainCat);
 }
 
 function getIconForProduct(category, productId, productTitle) {
@@ -68,7 +103,44 @@ function getCatFallbackSvg(category, productId, productTitle) {
     <rect width='200' height='200' fill='%23fff0f0' rx='16'/>
     <text x='100' y='115' font-size='72' text-anchor='middle' dominant-baseline='middle'>${icon}</text>
   </svg>`;
-  return `data:image/svg+xml,${svg.replace(/\n\s*/g, ' ')}`;
+  return `data:image/svg+xml,${svg.replace(/
+\s*/g, ' ')}`;
+}
+
+// Build prioritized image chain for <Marg_ID>.webp from amargupta-1/mayamart-images
+function buildProductImageSources(margId, sheetImageUrl) {
+  const cleanId = encodeURIComponent(String(margId).trim());
+  const fileName = `${cleanId}${CONFIG.IMAGE_EXT}`;
+  const jsdelivrUrl = `https://cdn.jsdelivr.net/gh/${CONFIG.IMAGE_REPO_USER}/${CONFIG.IMAGE_REPO_NAME}@${CONFIG.IMAGE_REPO_BRANCH}/${fileName}`;
+  const rawGithubUrl = `https://raw.githubusercontent.com/${CONFIG.IMAGE_REPO_USER}/${CONFIG.IMAGE_REPO_NAME}/${CONFIG.IMAGE_REPO_BRANCH}/${fileName}`;
+
+  // Ignore expiring Facebook/Instagram CDN URLs if present in sheet
+  const isVolatileCdn = /scontent|cdninstagram|fbcdn/i.test(sheetImageUrl || '');
+  const backupSheetUrl = (sheetImageUrl && sheetImageUrl.startsWith('http') && !isVolatileCdn)
+    ? sheetImageUrl
+    : '';
+
+  return {
+    primary: jsdelivrUrl,
+    secondary: rawGithubUrl,
+    tertiary: backupSheetUrl
+  };
+}
+
+function handleProductImgError(imgEl) {
+  const stage = Number(imgEl.dataset.errStage || 0);
+  if (stage === 0 && imgEl.dataset.src2) {
+    imgEl.dataset.errStage = '1';
+    imgEl.src = imgEl.dataset.src2;
+    return;
+  }
+  if (stage <= 1 && imgEl.dataset.src3) {
+    imgEl.dataset.errStage = '2';
+    imgEl.src = imgEl.dataset.src3;
+    return;
+  }
+  imgEl.onerror = null;
+  imgEl.src = getCatFallbackSvg(imgEl.dataset.cat || 'DEFAULT', imgEl.dataset.pid, imgEl.dataset.ptitle);
 }
 
 // ============================================================
@@ -138,7 +210,6 @@ function initPromoCarousel() {
     });
   });
 
-  // Touch swipe support
   let startX = 0;
   track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
   track.addEventListener('touchend', e => {
@@ -309,7 +380,6 @@ function parseStorefrontTable(table) {
     if (label) colMap[label] = i;
   });
 
-  // Fallback positional mapping matching A:N schema of mayamartmau.in tab
   const idxOf = (key, fallbackIdx) => (colMap[key] !== undefined ? colMap[key] : fallbackIdx);
 
   const iId      = idxOf('id', 0);
@@ -355,7 +425,6 @@ function parseStorefrontTable(table) {
     const availStr  = cellVal(row, iAvail).toLowerCase().replace(/_/g, ' ');
     const inStock   = availStr.includes('in stock') && !availStr.includes('out') && stockQty > 0;
 
-    // Effective selling price & MRP calculation
     let finalPrice = 0;
     let originalMrp = 0;
     if (rate > 0 && mrp > 0 && rate < mrp) {
@@ -368,10 +437,7 @@ function parseStorefrontTable(table) {
     }
 
     const rawImage = cellVal(row, iImg);
-    const image = rawImage.startsWith('http')
-      ? rawImage
-      : getCatFallbackSvg(mainCatRaw, id, title);
-
+    const imgSources = buildProductImageSources(id, rawImage);
     const barcode = cellVal(row, iGtin);
 
     products.push({
@@ -383,7 +449,9 @@ function parseStorefrontTable(table) {
       stock_quantity: stockQty,
       availability: inStock ? 'IN STOCK' : 'OUT OF STOCK',
       inStock,
-      image,
+      image: imgSources.primary,
+      image2: imgSources.secondary,
+      image3: imgSources.tertiary,
       barcode,
       brand,
       category: mainCatRaw,
@@ -395,7 +463,7 @@ function parseStorefrontTable(table) {
 }
 
 // ============================================================
-// BLINKIT 3-TIER TAXONOMY (MAIN CATEGORY -> SUBCATEGORY -> BRAND)
+// BLINKIT 3-TIER TAXONOMY (MAIN CATEGORY -> LEFT SUBCATEGORY RAIL -> BRAND)
 // ============================================================
 function getAllCategories() {
   const counts = {};
@@ -481,42 +549,60 @@ function setBrand(brand) {
 }
 
 function buildTaxonomyBars() {
-  const subcatRow   = document.getElementById('subcatRow');
-  const subcatStrip = document.getElementById('subcatStrip');
-  const brandStrip  = document.getElementById('brandStrip');
-  const crumbWrap   = document.getElementById('activeBreadcrumb');
-  const crumbTrail  = document.getElementById('breadcrumbTrail');
+  const subcatStrip   = document.getElementById('subcatStrip');
+  const sidebarHeader = document.getElementById('sidebarHeader');
+  const brandStrip    = document.getElementById('brandStrip');
+  const crumbWrap     = document.getElementById('activeBreadcrumb');
+  const crumbTrail    = document.getElementById('breadcrumbTrail');
 
-  // 1. Subcategory pills (visible when a Main Category is selected)
-  if (activeCategory !== 'ALL') {
-    const catProds = allProducts.filter(p => p.category === activeCategory);
-    const subCounts = {};
-    catProds.forEach(p => {
-      subCounts[p.subcategory] = (subCounts[p.subcategory] || 0) + 1;
-    });
-    const subs = Object.entries(subCounts).sort((a, b) => b[1] - a[1]);
+  // 1. Left Blinkit Vertical Subcategory Rail (Always active — shows subcategories of active category, or all subcategories when ALL)
+  const catProds = activeCategory !== 'ALL'
+    ? allProducts.filter(p => p.category === activeCategory)
+    : allProducts;
 
-    subcatRow.classList.remove('hidden');
-    let subHtml = `<button class="subcat-pill${activeSubcategory === 'ALL' ? ' active' : ''}" data-sub="ALL">
-      All in ${escHtml(activeCategory)} <span class="subcat-count">${catProds.length}</span>
-    </button>`;
-    subs.forEach(([sub, count]) => {
-      subHtml += `<button class="subcat-pill${activeSubcategory === sub ? ' active' : ''}" data-sub="${escHtml(sub)}">
-        ${escHtml(sub)} <span class="subcat-count">${count}</span>
-      </button>`;
-    });
-    subcatStrip.innerHTML = subHtml;
-    subcatStrip.querySelectorAll('.subcat-pill').forEach(btn => {
-      btn.addEventListener('click', () => setSubcategory(btn.dataset.sub));
-    });
-  } else {
-    subcatRow.classList.add('hidden');
-    subcatStrip.innerHTML = '';
+  const subMeta = {};
+  catProds.forEach(p => {
+    if (!subMeta[p.subcategory]) {
+      subMeta[p.subcategory] = { total: 0, inStock: 0, mainCat: p.category };
+    }
+    subMeta[p.subcategory].total += 1;
+    if (p.inStock) subMeta[p.subcategory].inStock += 1;
+  });
+
+  const subs = Object.entries(subMeta).sort((a, b) => b[1].inStock - a[1].inStock || b[1].total - a[1].total);
+
+  if (sidebarHeader) {
+    sidebarHeader.textContent = activeCategory === 'ALL' ? 'All Aisles' : activeCategory;
   }
 
-  // 2. Optional Brand (Marg Company) pills scoped to active Category + Subcategory
-  let scoped = allProducts;
-  if (activeCategory !== 'ALL')    scoped = scoped.filter(p => p.category === activeCategory);
+  let railHtml = `
+    <button class="sub-rail-item${activeSubcategory === 'ALL' ? ' active' : ''}" data-sub="ALL">
+      <div class="sub-rail-icon">${activeCategory === 'ALL' ? '🛒' : getCatIcon(activeCategory)}</div>
+      <div class="sub-rail-text">
+        <span class="sub-rail-name">All Items</span>
+        <span class="sub-rail-count">${catProds.length}</span>
+      </div>
+    </button>`;
+
+  subs.forEach(([sub, info]) => {
+    const icon = getSubcatIcon(sub, info.mainCat);
+    railHtml += `
+      <button class="sub-rail-item${activeSubcategory === sub ? ' active' : ''}" data-sub="${escHtml(sub)}">
+        <div class="sub-rail-icon">${icon}</div>
+        <div class="sub-rail-text">
+          <span class="sub-rail-name">${escHtml(sub)}</span>
+          <span class="sub-rail-count">${info.inStock}/${info.total}</span>
+        </div>
+      </button>`;
+  });
+
+  subcatStrip.innerHTML = railHtml;
+  subcatStrip.querySelectorAll('.sub-rail-item').forEach(btn => {
+    btn.addEventListener('click', () => setSubcategory(btn.dataset.sub));
+  });
+
+  // 2. Optional Brand (Marg Company) strip scoped to active Category + Subcategory
+  let scoped = catProds;
   if (activeSubcategory !== 'ALL') scoped = scoped.filter(p => p.subcategory === activeSubcategory);
 
   const brandCounts = {};
@@ -731,14 +817,11 @@ function showSkeletons() {
         <div class="skeleton skeleton-line" style="width:85%;height:14px;margin-bottom:8px"></div>
         <div class="skeleton skeleton-line" style="width:40%;height:18px"></div>
       </div>
-      <div class="product-card-footer">
-        <div class="skeleton skeleton-line" style="width:100%;height:34px;border-radius:8px"></div>
-      </div>
     </div>`).join('');
 }
 
 // ============================================================
-// PRODUCT CARD
+// BLINKIT-STYLE PRODUCT CARD
 // ============================================================
 function createProductCard(p) {
   const inCart  = getCartQty(p.id);
@@ -756,6 +839,8 @@ function createProductCard(p) {
     <div class="product-card-img-wrap">
       <img class="product-card-img"
            data-src="${escHtml(p.image)}"
+           data-src2="${escHtml(p.image2 || '')}"
+           data-src3="${escHtml(p.image3 || '')}"
            data-cat="${escHtml(p.category)}"
            data-pid="${escHtml(p.id)}"
            data-ptitle="${escHtml(p.title)}"
@@ -770,16 +855,10 @@ function createProductCard(p) {
         <i class="fa-${inWish ? 'solid' : 'regular'} fa-heart"></i>
       </button>
     </div>
-    <div class="product-card-body">
+    <div class="product-card-body" style="cursor:pointer;">
       ${p.brand && p.brand !== 'Other' ? `<div class="product-card-brand">${escHtml(p.brand)}</div>` : ''}
       <div class="product-card-name">${escHtml(p.title)}</div>
       ${p.packSize ? `<span class="product-card-pack">${escHtml(p.packSize)}</span>` : ''}
-      <div class="product-card-price">
-        ${p.sale_price > 0
-          ? `₹${p.sale_price}`
-          : '<span style="color:var(--text-muted);font-size:.84rem">Ask Rate on WA</span>'}
-        ${hasSale ? `<span class="original">₹${p.mrp}</span>` : ''}
-      </div>
       <div class="product-card-avail ${!inStock ? 'out-stock' : lowStock ? 'low-stock' : 'in-stock'}">
         ${!inStock
           ? '● Out of Stock'
@@ -788,16 +867,23 @@ function createProductCard(p) {
             : '● In Stock'}
       </div>
     </div>
-    <div class="product-card-footer" data-footer="${escHtml(p.id)}">
+    <div class="product-card-price-row" data-footer="${escHtml(p.id)}">
+      <div class="product-card-price-stack">
+        <span class="sell-price">${p.sale_price > 0 ? '₹' + p.sale_price : 'Ask Rate'}</span>
+        ${hasSale ? `<span class="mrp-price">₹${p.mrp}</span>` : ''}
+      </div>
       ${inCart > 0
-        ? qtyStepperHTML(p.id, inCart)
-        : `<button class="btn-add" ${!inStock ? 'disabled' : ''}>
-             <i class="fa-solid fa-cart-plus"></i> ${inStock ? 'Add to Cart' : 'Out of Stock'}
+        ? blinkitStepperHTML(inCart)
+        : `<button class="btn-blinkit-add" ${!inStock ? 'disabled' : ''}>
+             ${inStock ? 'ADD' : 'Sold Out'}
            </button>`}
-      <button class="btn-qv"><i class="fa-solid fa-eye"></i> Quick View</button>
     </div>`;
 
   lazyLoad(card.querySelector('.product-card-img'));
+
+  // Tap image or title body to open Quick View
+  card.querySelector('.product-card-img-wrap').addEventListener('click', () => openQuickView(p));
+  card.querySelector('.product-card-body').addEventListener('click', () => openQuickView(p));
 
   card.querySelector('.product-card-wish').addEventListener('click', e => {
     e.stopPropagation();
@@ -812,40 +898,32 @@ function createProductCard(p) {
     btn.classList.toggle('wished', nowWished);
   });
 
-  card.querySelector('.btn-qv').addEventListener('click', () => openQuickView(p));
-
-  const addBtn = card.querySelector('.btn-add');
-  if (addBtn && inStock) {
-    addBtn.addEventListener('click', () => {
-      addToCart(p);
-      refreshCardFooter(p.id);
-      showToast(`✓ ${p.title} added to cart`);
-    });
-  }
-
-  bindStepperEvents(card, p);
+  bindCardActionEvents(card, p);
   return card;
 }
 
-function qtyStepperHTML(id, qty) {
-  return `<div class="qty-stepper">
+function blinkitStepperHTML(qty) {
+  return `<div class="blinkit-stepper">
     <button class="stepper-minus" aria-label="Decrease">−</button>
     <span class="qty-val">${qty}</span>
     <button class="stepper-plus" aria-label="Increase">+</button>
   </div>`;
 }
 
-function addBtnHTML(p) {
-  return `<button class="btn-add" ${!p.inStock ? 'disabled' : ''}>
-    <i class="fa-solid fa-cart-plus"></i> ${p.inStock ? 'Add to Cart' : 'Out of Stock'}
-  </button>`;
-}
-
-function bindStepperEvents(card, p) {
+function bindCardActionEvents(card, p) {
+  const addBtn = card.querySelector('.btn-blinkit-add');
+  if (addBtn && p.inStock) {
+    addBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      addToCart(p);
+      refreshCardFooter(p.id);
+      showToast(`✓ ${p.title} added to cart`);
+    });
+  }
   const minus = card.querySelector('.stepper-minus');
   const plus  = card.querySelector('.stepper-plus');
-  if (minus) minus.addEventListener('click', () => { changeCartQty(p.id, -1); refreshCardFooter(p.id); });
-  if (plus)  plus.addEventListener('click',  () => { changeCartQty(p.id,  1); refreshCardFooter(p.id); });
+  if (minus) minus.addEventListener('click', e => { e.stopPropagation(); changeCartQty(p.id, -1); refreshCardFooter(p.id); });
+  if (plus)  plus.addEventListener('click',  e => { e.stopPropagation(); changeCartQty(p.id,  1); refreshCardFooter(p.id); });
 }
 
 function refreshCardFooter(id) {
@@ -855,35 +933,34 @@ function refreshCardFooter(id) {
   if (!footer) return;
   const p = allProducts.find(x => x.id === id);
   if (!p) return;
-  const qty = getCartQty(id);
-  const qvBtn = '<button class="btn-qv"><i class="fa-solid fa-eye"></i> Quick View</button>';
-  footer.innerHTML = (qty > 0 ? qtyStepperHTML(id, qty) : addBtnHTML(p)) + qvBtn;
 
-  const addBtn = footer.querySelector('.btn-add');
-  if (addBtn && p.inStock) {
-    addBtn.addEventListener('click', () => {
-      addToCart(p);
-      refreshCardFooter(id);
-      showToast(`✓ ${p.title} added to cart`);
-    });
-  }
-  footer.querySelector('.btn-qv').addEventListener('click', () => openQuickView(p));
-  bindStepperEvents(card, p);
+  const qty = getCartQty(id);
+  const hasSale = p.mrp > 0 && p.sale_price > 0 && p.sale_price < p.mrp;
+
+  footer.innerHTML = `
+    <div class="product-card-price-stack">
+      <span class="sell-price">${p.sale_price > 0 ? '₹' + p.sale_price : 'Ask Rate'}</span>
+      ${hasSale ? `<span class="mrp-price">₹${p.mrp}</span>` : ''}
+    </div>
+    ${qty > 0
+      ? blinkitStepperHTML(qty)
+      : `<button class="btn-blinkit-add" ${!p.inStock ? 'disabled' : ''}>
+           ${p.inStock ? 'ADD' : 'Sold Out'}
+         </button>`}`;
+
+  bindCardActionEvents(card, p);
 }
 
 // ============================================================
-// LAZY LOAD
+// LAZY LOAD WITH MULTI-STAGE <Marg_ID>.webp FALLBACK
 // ============================================================
 const imgObserver = window.IntersectionObserver
   ? new IntersectionObserver((entries, obs) => {
       entries.forEach(e => {
         if (!e.isIntersecting) return;
         const img = e.target;
+        img.onerror = () => handleProductImgError(img);
         img.src = img.dataset.src;
-        img.onerror = () => {
-          img.src = getCatFallbackSvg(img.dataset.cat || 'DEFAULT', img.dataset.pid, img.dataset.ptitle);
-          img.onerror = null;
-        };
         obs.unobserve(img);
       });
     }, { rootMargin: '300px' })
@@ -891,7 +968,10 @@ const imgObserver = window.IntersectionObserver
 
 function lazyLoad(img) {
   if (imgObserver) imgObserver.observe(img);
-  else img.src = img.dataset.src;
+  else {
+    img.onerror = () => handleProductImgError(img);
+    img.src = img.dataset.src;
+  }
 }
 
 // ============================================================
@@ -904,8 +984,14 @@ function openQuickView(p) {
 
   document.getElementById('qvContent').innerHTML = `
     <div class="qv-img-wrap">
-      <img class="qv-img" src="${escHtml(p.image)}" alt="${escHtml(p.title)}" loading="lazy"
-           onerror="this.src=getCatFallbackSvg('${escHtml(p.category)}','${escHtml(p.id)}');this.onerror=null" />
+      <img class="qv-img" src="${escHtml(p.image)}"
+           data-src2="${escHtml(p.image2 || '')}"
+           data-src3="${escHtml(p.image3 || '')}"
+           data-cat="${escHtml(p.category)}"
+           data-pid="${escHtml(p.id)}"
+           data-ptitle="${escHtml(p.title)}"
+           alt="${escHtml(p.title)}" loading="lazy"
+           onerror="handleProductImgError(this)" />
     </div>
     <div class="qv-info">
       <div class="qv-cat">${escHtml(p.category)} › ${escHtml(p.subcategory)}</div>
@@ -926,7 +1012,11 @@ function openQuickView(p) {
       </div>
       <div class="qv-actions" id="qvActions">
         ${getCartQty(p.id) > 0
-          ? qtyStepperHTML(p.id, getCartQty(p.id))
+          ? `<div class="qty-stepper">
+               <button class="stepper-minus" aria-label="Decrease">−</button>
+               <span class="qty-val">${getCartQty(p.id)}</span>
+               <button class="stepper-plus" aria-label="Increase">+</button>
+             </div>`
           : `<button class="btn btn-primary btn-full qv-add-btn" ${!inStock ? 'disabled' : ''}>
                <i class="fa-solid fa-cart-plus"></i> ${inStock ? 'Add to Cart' : 'Out of Stock'}
              </button>`}
@@ -951,7 +1041,11 @@ function bindQVActions(overlay, p) {
       addToCart(p);
       refreshCardFooter(p.id);
       showToast(`✓ ${p.title} added to cart`);
-      actionsDiv.innerHTML = qtyStepperHTML(p.id, getCartQty(p.id));
+      actionsDiv.innerHTML = `<div class="qty-stepper">
+        <button class="stepper-minus" aria-label="Decrease">−</button>
+        <span class="qty-val">${getCartQty(p.id)}</span>
+        <button class="stepper-plus" aria-label="Increase">+</button>
+      </div>`;
       bindQVSteppers(actionsDiv, p);
     });
   }
@@ -1012,6 +1106,8 @@ function addToCart(p) {
       packSize: p.packSize || '',
       price: p.sale_price || 0,
       image: p.image,
+      image2: p.image2 || '',
+      image3: p.image3 || '',
       qty: 1,
       category: p.category
     });
@@ -1057,7 +1153,17 @@ function renderCartBadge() {
 function toggleWishlist(p) {
   const idx = wishlist.findIndex(w => w.id === p.id);
   if (idx >= 0) wishlist.splice(idx, 1);
-  else wishlist.push({ id: p.id, title: p.title, price: p.sale_price || 0, image: p.image, category: p.category });
+  else {
+    wishlist.push({
+      id: p.id,
+      title: p.title,
+      price: p.sale_price || 0,
+      image: p.image,
+      image2: p.image2 || '',
+      image3: p.image3 || '',
+      category: p.category
+    });
+  }
   localStorage.setItem('mm_wishlist', JSON.stringify(wishlist));
   renderWishlistBadge();
   updateMobileBar();
@@ -1076,7 +1182,15 @@ function renderWishlistBadge() {
 // ============================================================
 function addToRecentlyViewed(p) {
   recentlyViewed = recentlyViewed.filter(r => r.id !== p.id);
-  recentlyViewed.unshift({ id: p.id, title: p.title, price: p.sale_price || 0, image: p.image, category: p.category });
+  recentlyViewed.unshift({
+    id: p.id,
+    title: p.title,
+    price: p.sale_price || 0,
+    image: p.image,
+    image2: p.image2 || '',
+    image3: p.image3 || '',
+    category: p.category
+  });
   if (recentlyViewed.length > CONFIG.RECENT_MAX) recentlyViewed.pop();
   localStorage.setItem('mm_recent', JSON.stringify(recentlyViewed));
   renderRecentlyViewed();
@@ -1094,9 +1208,10 @@ function renderRecentlyViewed() {
       border-radius:12px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;">
       <div style="width:130px;height:95px;background:var(--surface2);display:flex;align-items:center;justify-content:center;overflow:hidden;">
         <img src="${escHtml(r.image)}" alt="${escHtml(r.title)}"
-             data-cat="${escHtml(r.category || 'DEFAULT')}" data-pid="${escHtml(r.id)}"
+             data-src2="${escHtml(r.image2 || '')}" data-src3="${escHtml(r.image3 || '')}"
+             data-cat="${escHtml(r.category || 'DEFAULT')}" data-pid="${escHtml(r.id)}" data-ptitle="${escHtml(r.title)}"
              style="width:100%;height:100%;object-fit:contain;padding:6px;"
-             onerror="this.src=getCatFallbackSvg(this.dataset.cat,this.dataset.pid);this.onerror=null" />
+             onerror="handleProductImgError(this)" />
       </div>
       <div style="padding:8px;flex:1;display:flex;flex-direction:column;gap:3px;">
         <div style="font-size:.74rem;font-weight:700;color:var(--text);line-height:1.3;
@@ -1143,7 +1258,7 @@ function updateTitle() {
   if (activeBrand !== 'ALL') {
     el.textContent = `🏷️ ${activeBrand}`;
   } else if (activeSubcategory !== 'ALL') {
-    el.textContent = `${getCatIcon(activeCategory)} ${activeSubcategory}`;
+    el.textContent = `${getSubcatIcon(activeSubcategory, activeCategory)} ${activeSubcategory}`;
   } else if (activeCategory !== 'ALL') {
     el.textContent = `${getCatIcon(activeCategory)} ${activeCategory}`;
   } else {
@@ -1237,7 +1352,6 @@ function bindUI() {
     });
   }
 
-  // Back to top
   const backToTop = document.getElementById('backToTop');
   if (backToTop) {
     window.addEventListener('scroll', () => {
@@ -1246,13 +1360,11 @@ function bindUI() {
     backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   }
 
-  // Quick view
   const qvClose = document.getElementById('qvClose');
   if (qvClose) qvClose.addEventListener('click', closeQuickView);
   const qvOverlay = document.getElementById('quickViewOverlay');
   if (qvOverlay) qvOverlay.addEventListener('click', e => { if (e.target === qvOverlay) closeQuickView(); });
 
-  // Cart panel
   const cartBtn   = document.getElementById('cartBtn');
   const cartPanel = document.getElementById('cartOverlay');
   const cartClose = document.getElementById('cartClose');
@@ -1260,7 +1372,6 @@ function bindUI() {
   if (cartClose) cartClose.addEventListener('click', () => cartPanel.classList.add('hidden'));
   if (cartPanel) cartPanel.addEventListener('click', e => { if (e.target === cartPanel) cartPanel.classList.add('hidden'); });
 
-  // Wishlist panel
   const wishBtn   = document.getElementById('wishlistBtn');
   const wishPanel = document.getElementById('wishlistOverlay');
   const wishClose = document.getElementById('wishlistClose');
@@ -1270,7 +1381,7 @@ function bindUI() {
 }
 
 // ============================================================
-// CART PANEL RENDER (With Home Delivery Minimum Order Progress)
+// CART PANEL RENDER
 // ============================================================
 function renderCartPanel() {
   const list   = document.getElementById('cartItems');
@@ -1290,8 +1401,9 @@ function renderCartPanel() {
   list.innerHTML = cart.map(item => `
     <div class="cart-item" data-id="${escHtml(item.id)}">
       <img class="cart-item-img" src="${escHtml(item.image)}" alt="${escHtml(item.title)}"
-           data-cat="${escHtml(item.category || 'DEFAULT')}" data-pid="${escHtml(item.id)}"
-           onerror="this.src=getCatFallbackSvg(this.dataset.cat,this.dataset.pid);this.onerror=null" />
+           data-src2="${escHtml(item.image2 || '')}" data-src3="${escHtml(item.image3 || '')}"
+           data-cat="${escHtml(item.category || 'DEFAULT')}" data-pid="${escHtml(item.id)}" data-ptitle="${escHtml(item.title)}"
+           onerror="handleProductImgError(this)" />
       <div class="cart-item-info">
         <div class="cart-item-name">${escHtml(item.title)} ${item.packSize ? `(${escHtml(item.packSize)})` : ''}</div>
         <div class="cart-item-price">${item.price > 0 ? '₹' + item.price : 'Confirm rate'}</div>
@@ -1396,12 +1508,24 @@ function renderCartPanel() {
       if (deliveryMode === 'delivery') localStorage.setItem('mm_cust_address', address);
 
       const lines = cart.map(i =>
-        `• ${i.title}${i.packSize ? ' (' + i.packSize + ')' : ''}\n  ID: ${i.id} | Qty: ${i.qty}${i.price > 0 ? ` | ₹${i.price} × ${i.qty} = ₹${i.price * i.qty}` : ''}`
-      ).join('\n');
+        `• ${i.title}${i.packSize ? ' (' + i.packSize + ')' : ''}
+  ID: ${i.id} | Qty: ${i.qty}${i.price > 0 ? ` | ₹${i.price} × ${i.qty} = ₹${i.price * i.qty}` : ''}`
+      ).join('
+');
       const orderType = deliveryMode === 'delivery' ? 'Home Delivery 🚚' : 'Store Pickup 🏪';
-      const addrLine  = deliveryMode === 'delivery' ? `\nAddress: ${address}` : '';
-      const minNote   = (deliveryMode === 'delivery' && sum < minOrd) ? `\n_(Note: Order is under ₹${minOrd} free-delivery threshold)_` : '';
-      const msg = `🛒 *Maya Mart Order*\n\nOrder Type: ${orderType}\nName: ${name}${addrLine}\n\n*My Order:*\n${lines}\n\n${sum > 0 ? `*Estimated Total: ₹${sum}*` : 'Please confirm prices.'}${minNote}`;
+      const addrLine  = deliveryMode === 'delivery' ? `
+Address: ${address}` : '';
+      const minNote   = (deliveryMode === 'delivery' && sum < minOrd) ? `
+_(Note: Order is under ₹${minOrd} free-delivery threshold)_` : '';
+      const msg = `🛒 *Maya Mart Order*
+
+Order Type: ${orderType}
+Name: ${name}${addrLine}
+
+*My Order:*
+${lines}
+
+${sum > 0 ? `*Estimated Total: ₹${sum}*` : 'Please confirm prices.'}${minNote}`;
 
       window.open(`https://wa.me/${CONFIG.WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
     });
@@ -1427,8 +1551,9 @@ function renderWishPanel() {
   list.innerHTML = wishlist.map(item => `
     <div class="wish-item" data-id="${escHtml(item.id)}">
       <img class="wish-item-img" src="${escHtml(item.image)}" alt="${escHtml(item.title)}"
-           data-cat="${escHtml(item.category || 'DEFAULT')}" data-pid="${escHtml(item.id)}"
-           onerror="this.src=getCatFallbackSvg(this.dataset.cat,this.dataset.pid);this.onerror=null" />
+           data-src2="${escHtml(item.image2 || '')}" data-src3="${escHtml(item.image3 || '')}"
+           data-cat="${escHtml(item.category || 'DEFAULT')}" data-pid="${escHtml(item.id)}" data-ptitle="${escHtml(item.title)}"
+           onerror="handleProductImgError(this)" />
       <div class="wish-item-info">
         <div class="wish-item-name">${escHtml(item.title)}</div>
         <div class="wish-item-price">${item.price > 0 ? '₹' + item.price : '—'}</div>

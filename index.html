@@ -212,79 +212,80 @@
       </div>
     </section>
 
-    <!-- ALL PRODUCTS + BLINKIT SUBCATEGORY & MARG COMPANY FILTER -->
-    <section class="section" id="products" style="padding-top:24px;">
+    <!-- BLINKIT SPLIT-PANE STOREFRONT (LEFT SUBCATEGORY RAIL + RIGHT PRODUCT GRID) -->
+    <section class="section blinkit-section" id="products">
       <div class="container">
-        <div class="section-header" style="margin-bottom:18px;">
-          <h2 class="section-title" id="productsTitle">All Products</h2>
-          <p class="section-sub" id="productsSubtitle">Showing in-stock items first</p>
-          <p class="search-result-count" id="searchResultCount"></p>
+        <div class="blinkit-topbar">
+          <div class="blinkit-heading-group">
+            <h2 class="blinkit-title" id="productsTitle">All Products</h2>
+            <p class="blinkit-sub" id="productsSubtitle">Showing in-stock items first</p>
+            <p class="search-result-count" id="searchResultCount"></p>
+          </div>
         </div>
 
-        <!-- Blinkit Subcategory & Marg Company Browser -->
-        <div class="taxonomy-browser" id="taxonomyBrowser">
-          <!-- Subcategories Row -->
-          <div class="tax-row hidden" id="subcatRow">
-            <div class="tax-row-header">
-              <span class="tax-row-label"><i class="fa-solid fa-layer-group"></i> Subcategories</span>
+        <!-- Active Selection Breadcrumb -->
+        <div class="active-breadcrumb hidden" id="activeBreadcrumb">
+          <div class="breadcrumb-trail" id="breadcrumbTrail"></div>
+          <button class="btn-reset-tax" id="resetTaxBtn"><i class="fa-solid fa-rotate-left"></i> Reset Filters</button>
+        </div>
+
+        <!-- Blinkit 2-Column Split Layout: Sticky Subcategory Sidebar + Products -->
+        <div class="blinkit-shell">
+          <!-- Left Vertical Subcategory Rail -->
+          <aside class="blinkit-sidebar" id="blinkitSidebar" aria-label="Subcategories">
+            <div class="sidebar-rail-header" id="sidebarHeader">Subcategories</div>
+            <div id="subcatStrip"></div>
+          </aside>
+
+          <!-- Right Product Area -->
+          <div class="blinkit-main">
+            <!-- Optional Brand / Marg Company Filter Strip -->
+            <div class="brand-filter-bar" id="brandRow">
+              <span class="brand-filter-label"><i class="fa-solid fa-tag"></i> Brand:</span>
+              <div class="tax-strip" id="brandStrip"></div>
             </div>
-            <div class="tax-strip" id="subcatStrip"></div>
-          </div>
 
-          <!-- Optional Brand / Marg Company Row -->
-          <div class="tax-row" id="brandRow">
-            <div class="tax-row-header">
-              <span class="tax-row-label"><i class="fa-solid fa-tag"></i> Filter by Brand (Optional)</span>
+            <!-- Stock & Sort Row -->
+            <div class="filters-row">
+              <div class="filter-chips" id="filterChips">
+                <button class="chip active" data-filter="all">All (In-Stock First)</button>
+                <button class="chip" data-filter="instock">In Stock</button>
+                <button class="chip" data-filter="sale">Offers</button>
+                <button class="chip" data-filter="outofstock">Out of Stock</button>
+              </div>
+              <div class="sort-wrap">
+                <label for="sortSelect" class="sr-only">Sort by</label>
+                <select id="sortSelect" class="sort-select">
+                  <option value="default">Sort: In-Stock First</option>
+                  <option value="price-low">Price: Low → High</option>
+                  <option value="price-high">Price: High → Low</option>
+                  <option value="alpha-az">Name: A → Z</option>
+                  <option value="alpha-za">Name: Z → A</option>
+                </select>
+              </div>
             </div>
-            <div class="tax-strip" id="brandStrip"></div>
+
+            <!-- Loading State -->
+            <div class="loading-state" id="loadingState">
+              <div class="spinner"></div>
+              <p>Loading live catalog from Maya Mart…</p>
+            </div>
+
+            <!-- Error State -->
+            <div class="error-state hidden" id="errorState">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <p>Could not load products. Please check your internet connection or sheet sharing settings and try again.</p>
+              <button class="btn btn-primary" onclick="initProducts(true)">Retry</button>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="product-grid" id="productGrid"></div>
+
+            <!-- Load More -->
+            <div class="load-more-wrap hidden" id="loadMoreWrap">
+              <button class="btn btn-outline" id="loadMoreBtn">Load More Products</button>
+            </div>
           </div>
-
-          <!-- Active Selection Breadcrumb -->
-          <div class="active-breadcrumb hidden" id="activeBreadcrumb">
-            <div class="breadcrumb-trail" id="breadcrumbTrail"></div>
-            <button class="btn-reset-tax" id="resetTaxBtn"><i class="fa-solid fa-rotate-left"></i> Reset Filters</button>
-          </div>
-        </div>
-
-        <!-- Stock & Sort Row -->
-        <div class="filters-row">
-          <div class="filter-chips" id="filterChips">
-            <button class="chip active" data-filter="all">All (In-Stock First)</button>
-            <button class="chip" data-filter="instock">In Stock Only</button>
-            <button class="chip" data-filter="sale">Discounted / Offer</button>
-            <button class="chip" data-filter="outofstock">Out of Stock</button>
-          </div>
-          <div class="sort-wrap">
-            <label for="sortSelect" class="sr-only">Sort by</label>
-            <select id="sortSelect" class="sort-select">
-              <option value="default">Sort: In-Stock First</option>
-              <option value="price-low">Price: Low → High</option>
-              <option value="price-high">Price: High → Low</option>
-              <option value="alpha-az">Name: A → Z</option>
-              <option value="alpha-za">Name: Z → A</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Loading State -->
-        <div class="loading-state" id="loadingState">
-          <div class="spinner"></div>
-          <p>Loading live catalog from Maya Mart…</p>
-        </div>
-
-        <!-- Error State -->
-        <div class="error-state hidden" id="errorState">
-          <i class="fa-solid fa-triangle-exclamation"></i>
-          <p>Could not load products. Please check your internet connection or sheet sharing settings and try again.</p>
-          <button class="btn btn-primary" onclick="initProducts(true)">Retry</button>
-        </div>
-
-        <!-- Product Grid -->
-        <div class="product-grid" id="productGrid"></div>
-
-        <!-- Load More -->
-        <div class="load-more-wrap hidden" id="loadMoreWrap">
-          <button class="btn btn-outline" id="loadMoreBtn">Load More Products</button>
         </div>
       </div>
     </section>

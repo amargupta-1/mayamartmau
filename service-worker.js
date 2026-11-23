@@ -3,7 +3,7 @@
    Cache visited pages + assets for offline
    ============================================= */
 
-const CACHE_NAME = 'maya-mart-v3';
+const CACHE_NAME = 'maya-mart-v4';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
