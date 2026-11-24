@@ -8,20 +8,20 @@
    TOKENS — LIGHT MODE
    ============================================================ */
 :root {
-  /* Brand */
-  --brand:        #f50103;   /* logo red — never changed */
-  --primary:      #9E1B1B;   /* deep crimson for UI buttons */
-  --primary-dark: #7f0000;
-  --primary-light:#fff0f0;
+  /* Brand — Fresh Grocery Emerald Green in Light Mode */
+  --brand:        #1B7A43;
+  --primary:      #1B7A43;   /* vibrant grocery green for UI buttons & accents */
+  --primary-dark: #135931;
+  --primary-light:#EAF7EF;
 
-  /* Secondary — elegant sage green */
-  --sage:         #2C5E43;
-  --sage-mid:     #5F7D6B;
-  --sage-light:   #F2F6F3;
+  /* Secondary — complementary forest/leaf green */
+  --sage:         #1E6B3E;
+  --sage-mid:     #4B8364;
+  --sage-light:   #F0F9F3;
 
-  /* Gold accent (used in dark mode mainly, available both) */
-  --gold:         #C5A059;
-  --gold-light:   #FFF9E6;
+  /* Warm harvest mango-gold accent (matches shopping bags in icon) */
+  --gold:         #D98A1B;
+  --gold-light:   #FFF8EB;
 
   /* WA */
   --wa:           #25d366;
@@ -31,19 +31,19 @@
   --danger:       #c62828;
   --danger-light: #fdecea;
 
-  /* Surfaces — marble-inspired clean */
-  --bg:           #FAFAFA;
+  /* Surfaces — fresh mint-marble clean */
+  --bg:           #F7FBF8;
   --surface:      #FFFFFF;
-  --surface2:     #F8F5F2;
-  --border:       #EAEAEA;
-  --text:         #1C1C1C;
-  --text-mid:     #4A4A4A;
-  --text-muted:   #8A8A8A;
+  --surface2:     #F2F8F4;
+  --border:       #DCECE2;
+  --text:         #16241B;
+  --text-mid:     #3B5243;
+  --text-muted:   #6E8577;
 
-  /* Shadows — subtle depth */
-  --shadow:       0 2px 16px rgba(0,0,0,.06);
-  --shadow-md:    0 6px 32px rgba(0,0,0,.10);
-  --shadow-red:   0 4px 20px rgba(158,27,27,.18);
+  /* Shadows — subtle organic depth */
+  --shadow:       0 2px 16px rgba(22,36,27,.06);
+  --shadow-md:    0 6px 32px rgba(22,36,27,.10);
+  --shadow-red:   0 4px 20px rgba(27,122,67,.20);
 
   /* Shape */
   --radius:       16px;
@@ -144,7 +144,7 @@ h1,h2,h3,h4{font-family:var(--font-head);line-height:1.2;font-weight:800}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:var(--radius-pill);font-weight:700;font-size:.95rem;transition:transform var(--transition),box-shadow var(--transition),background var(--transition);white-space:nowrap}
 .btn:active{transform:scale(.97)}
 .btn-primary{background:var(--primary);color:#fff;box-shadow:var(--shadow-red)}
-.btn-primary:hover{background:var(--primary-dark);box-shadow:0 6px 28px rgba(158,27,27,.35)}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 6px 28px rgba(27,122,67,.32)}
 .btn-outline{background:transparent;color:var(--primary);border:2px solid var(--primary)}
 .btn-outline:hover{background:var(--primary-light)}
 .btn-wa{background:var(--wa);color:#fff}
@@ -417,7 +417,7 @@ h1,h2,h3,h4{font-family:var(--font-head);line-height:1.2;font-weight:800}
   transition:transform var(--transition),box-shadow var(--transition),border-color var(--transition);
   position:relative;
 }
-.product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:rgba(158,27,27,.25)}
+.product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:rgba(27,122,67,.30)}
 .dark-mode .product-card{background:var(--surface-card);border-color:var(--border)}
 .dark-mode .product-card:hover{border-color:rgba(212,175,55,.3);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 0 1px rgba(212,175,55,.15)}
 
@@ -535,7 +535,7 @@ h1,h2,h3,h4{font-family:var(--font-head);line-height:1.2;font-weight:800}
 /* ============================================================
    FOOTER — deep red/dark
    ============================================================ */
-.footer{background:linear-gradient(135deg,#4a0000,#6b0000);color:rgba(255,255,255,.88);padding:32px 0}
+.footer{background:linear-gradient(135deg,#0E3F23,#175C34);color:rgba(255,255,255,.92);padding:32px 0}
 .dark-mode .footer{background:linear-gradient(135deg,#0D1117,#161B22);border-top:1px solid rgba(212,175,55,.2)}
 .footer-inner{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
 .footer .logo-main{color:#fff;font-size:1.3rem}
@@ -649,7 +649,7 @@ h1,h2,h3,h4{font-family:var(--font-head);line-height:1.2;font-weight:800}
 /* co-input for cart footer checkout */
 .co-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem;font-family:inherit;outline:none;background:var(--surface2);color:var(--text);transition:border-color .2s}
 .co-input:focus{border-color:var(--primary)}
-.co-input.error{border-color:var(--primary);box-shadow:0 0 0 3px rgba(158,27,27,.15)}
+.co-input.error{border-color:var(--danger);box-shadow:0 0 0 3px rgba(198,40,40,.15)}
 .dark-mode .co-input{background:rgba(255,255,255,.05);border-color:var(--border);color:var(--text)}
 .dark-mode .co-input:focus{border-color:var(--gold)}
 
@@ -753,7 +753,7 @@ body{padding-bottom:0}
   border-radius: 18px;
   overflow: hidden;
   box-shadow: var(--shadow-md);
-  background: linear-gradient(135deg, #6b0000 0%, #9E1B1B 55%, #C8580A 100%);
+  background: linear-gradient(135deg, #0E4D29 0%, #1B7A43 58%, #2E9E5B 100%);
 }
 .promo-track {
   display: flex;
@@ -811,7 +811,7 @@ body{padding-bottom:0}
   align-items: center;
   gap: 7px;
   background: #fff;
-  color: #9E1B1B;
+  color: #1B7A43;
   font-weight: 800;
   font-size: 0.82rem;
   padding: 7px 16px;
@@ -1453,4 +1453,26 @@ body{padding-bottom:0}
   background: #10241b;
   border-color: #254d3b;
   color: #8fd3b6;
+}
+
+
+/* ============================================================
+   V5 THEME ADDITIONS: DUAL-MODE LOGO SWITCHING & GREEN POLISH
+   ============================================================ */
+.logo-light { display: block; }
+.logo-dark  { display: none; }
+.dark-mode .logo-light { display: none; }
+.dark-mode .logo-dark  { display: block; }
+
+.dark-mode .btn-primary:hover {
+  box-shadow: 0 6px 28px rgba(230, 57, 70, 0.35);
+}
+.dark-mode .product-card:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+}
+.product-card-avail.out-stock {
+  color: var(--danger);
+}
+.dark-mode .product-card-avail.out-stock {
+  color: var(--primary);
 }
