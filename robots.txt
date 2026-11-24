@@ -13,8 +13,6 @@ Allow: /index.html
 Allow: /favicon.svg
 Allow: /favicon.png
 Allow: /MAYA MART LOGO RED.png
-Allow: /MAYA MART LOGO GREEN.png
-Allow: /MAYA MART ICON.png
 
 # Sitemap location
 Sitemap: https://mayamartmau.in/sitemap.xml

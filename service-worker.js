@@ -3,16 +3,14 @@
    Cache visited pages + assets for offline
    ============================================= */
 
-const CACHE_NAME = 'maya-mart-v5';
+const CACHE_NAME = 'maya-mart-v4';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/css/style.css',
   '/js/app.js',
   '/manifest.json',
-  '/MAYA MART LOGO GREEN.png',
   '/MAYA MART LOGO RED.png',
-  '/MAYA MART ICON.png',
   '/favicon.png',
   'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
