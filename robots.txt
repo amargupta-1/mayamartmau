@@ -14,6 +14,7 @@ Allow: /favicon.svg
 Allow: /favicon.png
 Allow: /MAYA MART LOGO RED.png
 Allow: /MAYA MART LOGO GREEN.png
+Allow: /MAYA MART LOGO WHITE.png
 Allow: /MAYA MART ICON.png
 
 # Sitemap location

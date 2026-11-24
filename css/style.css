@@ -177,8 +177,8 @@ h1,h2,h3,h4{font-family:var(--font-head);line-height:1.2;font-weight:800}
 .logo-main{font-family:var(--font-head);font-weight:800;font-size:1.2rem;color:var(--primary);display:block;line-height:1.1}
 .logo-sub{font-size:.65rem;color:var(--text-muted);font-weight:600;display:block}
 
-.desktop-search{display:none}
-@media(min-width:640px){.desktop-search{display:flex;flex:1;max-width:500px}}
+.search-wrap.desktop-search{display:none}
+@media(min-width:640px){.search-wrap.desktop-search{display:flex;flex:1;max-width:500px}}
 
 .search-wrap{position:relative;width:100%;display:flex}
 .search-input{flex:1;padding:10px 16px;border:2px solid var(--border);border-right:none;border-radius:var(--radius-pill) 0 0 var(--radius-pill);background:var(--surface2);color:var(--text);font-size:.9rem;outline:none;transition:border-color var(--transition)}
@@ -1475,4 +1475,386 @@ body{padding-bottom:0}
 }
 .dark-mode .product-card-avail.out-stock {
   color: var(--primary);
+}
+
+
+/* ============================================================
+   V6 UPGRADES: DUAL-LOGO STRICT SWITCHING, HINDI TOGGLE,
+   REVIEWS FORM STYLING & COMPLETE MOBILE ALIGNMENT POLISH
+   ============================================================ */
+
+/* Strict single-logo visibility (fixes duplicate logo bug) */
+img.logo-light { display: block !important; }
+img.logo-dark  { display: none !important; }
+.dark-mode img.logo-light { display: none !important; }
+.dark-mode img.logo-dark  { display: block !important; }
+
+/* Header & Mobile Top-Bar Alignment */
+.header-inner {
+  gap: 8px;
+  justify-content: space-between;
+}
+.logo img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 0;
+}
+@media (min-width: 640px) {
+  .logo img {
+    height: 46px;
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+@media (min-width: 640px) {
+  .header-actions {
+    gap: 6px;
+  }
+}
+
+.icon-btn {
+  width: 35px;
+  height: 35px;
+  font-size: 1rem;
+}
+@media (min-width: 640px) {
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+}
+
+/* Bilingual EN / हिंदी Toggle Pill */
+.lang-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 9px;
+  border-radius: 100px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  white-space: nowrap;
+  transition: all 0.18s ease;
+}
+.lang-toggle-btn:hover {
+  background: var(--primary);
+  color: #fff;
+}
+.dark-mode .lang-toggle-btn {
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--gold);
+  border-color: var(--gold);
+}
+.dark-mode .lang-toggle-btn:hover {
+  background: var(--gold);
+  color: #0D1117;
+}
+
+/* Promo Carousel Mobile Polish (Prevent arrow overlap on text) */
+.promo-arrow {
+  display: none;
+}
+@media (min-width: 640px) {
+  .promo-arrow {
+    display: flex;
+  }
+}
+.promo-slide {
+  padding: 18px 18px 28px;
+}
+@media (min-width: 640px) {
+  .promo-slide {
+    padding: 24px 52px;
+  }
+}
+
+/* Delivery Notice Bar Mobile Alignment */
+.delivery-notice-bar {
+  padding: 10px 14px;
+  align-items: flex-start;
+}
+@media (min-width: 640px) {
+  .delivery-notice-bar {
+    align-items: center;
+  }
+}
+.delivery-notice-left {
+  align-items: flex-start;
+  line-height: 1.4;
+}
+.delivery-notice-left i {
+  margin-top: 3px;
+}
+
+/* Mobile-Friendly Horizontal Chips & Brand Bar */
+.blinkit-main .filters-row {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.blinkit-main .filters-row::-webkit-scrollbar {
+  display: none;
+}
+.blinkit-main .filter-chips {
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+.blinkit-main .sort-wrap {
+  flex-shrink: 0;
+}
+
+@media (max-width: 639px) {
+  .blinkit-sidebar {
+    top: 138px;
+    max-height: calc(100vh - 205px);
+  }
+  .floating-btns {
+    bottom: 72px;
+    right: 10px;
+    gap: 8px;
+  }
+  .fab {
+    width: 42px;
+    height: 42px;
+    font-size: 1.05rem;
+  }
+  .mobile-cart-bar {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  .mobile-cart-bar .btn {
+    padding: 10px 12px;
+    font-size: 0.86rem;
+    border-radius: 12px;
+  }
+}
+
+/* ============================================================
+   CUSTOMER REVIEWS & FORM ALIGNMENT (Fixes Mobile Form Layout)
+   ============================================================ */
+.review-section {
+  background: var(--bg);
+}
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.review-loading,
+.review-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 28px 16px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.review-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.review-card-stars {
+  color: #f59e0b;
+  font-size: 1rem;
+  letter-spacing: 2px;
+}
+.review-card-text {
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+.review-card-name {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+.review-card-date {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.review-avg-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 24px;
+  padding: 10px 18px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  width: fit-content;
+  margin-inline: auto;
+}
+.review-avg-stars {
+  color: #f59e0b;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+}
+.review-avg-text {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.review-form-wrap {
+  max-width: 540px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 22px 20px;
+  box-shadow: var(--shadow);
+}
+.review-form-title {
+  font-size: 1.2rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.review-form-sub {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.review-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+.review-field label {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--text);
+}
+.review-field input,
+.review-field textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 0.92rem;
+  outline: none;
+  transition: border-color 0.2s;
+  resize: vertical;
+}
+.review-field input:focus,
+.review-field textarea:focus {
+  border-color: var(--primary);
+}
+.dark-mode .review-field input,
+.dark-mode .review-field textarea {
+  background: rgba(255, 255, 255, 0.05);
+}
+.dark-mode .review-field input:focus,
+.dark-mode .review-field textarea:focus {
+  border-color: var(--gold);
+}
+
+.star-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.star-pick {
+  font-size: 1.75rem;
+  line-height: 1;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: transform 0.15s, color 0.15s;
+  user-select: none;
+}
+.star-pick.hover,
+.star-pick.active {
+  color: #f59e0b;
+  transform: scale(1.1);
+}
+
+.rv-msg {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rv-msg--success {
+  background: #e6f6ed;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+.rv-msg--error {
+  background: #fdecea;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* Quick Locality Chips & Past Orders in Cart Drawer */
+.locality-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+.locality-chips::-webkit-scrollbar {
+  display: none;
+}
+.locality-chip {
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+  white-space: nowrap;
+}
+.locality-chip:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.past-orders-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 4px;
+}
+.btn-past-orders {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  background: var(--primary-light);
 }

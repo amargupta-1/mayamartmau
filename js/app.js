@@ -25,6 +25,225 @@ const CONFIG = {
   EXCLUDED_CATEGORIES: ['UNCATEGORIZED STAGING', '-BLANK-', 'BLANK', '']
 };
 
+
+// ============================================================
+// BILINGUAL ENGLISH / HINDI (हिंदी) TRANSLATION ENGINE
+// ============================================================
+let currentLang = localStorage.getItem('mm_lang') || 'en';
+
+const I18N = {
+  en: {
+    langBtn: 'हिंदी',
+    searchPlaceholder: 'Search products, brands, barcodes, categories…',
+    searchMobilePlaceholder: 'Search products, brands, barcodes…',
+    allPill: '🛒 All',
+    allItemsRail: 'All Items',
+    allAisles: 'All Aisles',
+    brandLabel: 'Brand:',
+    allBrands: 'All Brands',
+    filterAll: 'All (In-Stock First)',
+    filterInStock: 'In Stock',
+    filterOffers: 'Offers',
+    filterOos: 'Out of Stock',
+    sortDefault: 'Sort: In-Stock First',
+    sortLow: 'Price: Low → High',
+    sortHigh: 'Price: High → Low',
+    sortAz: 'Name: A → Z',
+    sortZa: 'Name: Z → A',
+    shopByCat: 'Shop by Category',
+    shopByCatSub: 'Tap any category to explore subcategories & brands',
+    allProducts: 'All Products',
+    inStockBadge: '● In Stock',
+    outStockBadge: '● Out of Stock',
+    soldOutBadge: 'Out of Stock',
+    addBtn: 'ADD',
+    soldOutBtn: 'Sold Out',
+    askRate: 'Ask Rate',
+    addToCart: 'Add to Cart',
+    shareProduct: 'Share Product',
+    yourCart: 'Your Cart',
+    cartEmpty: 'Your cart is empty',
+    cartEmptySub: 'Add in-stock items to get started',
+    homeDelivery: 'Home Delivery',
+    storePickup: 'Store Pickup',
+    yourNamePh: 'Your name *',
+    addressPh: 'House / Street / Landmark in Mau *',
+    sendWaBtn: 'Send Order via WhatsApp',
+    estTotal: 'Estimated Total',
+    pastOrders: 'Past Orders',
+    reorderBtn: 'Reorder All',
+    recentViewed: 'Recently Viewed',
+    wholesaleTitle: 'Buying in Bulk or for Events?',
+    wholesaleSub: 'Get special wholesale pricing for large orders, hostels & functions. Contact us directly for best rates.',
+    wholesaleBtn: 'Request Wholesale Pricing',
+    deliveryNoticeHtml: '<strong>Home Delivery Notice:</strong> Minimum order of <strong>₹299</strong> for Free Home Delivery in Mau (Store Pickup has ₹0 minimum).',
+    slide1Tag: 'Same-Day Home Delivery',
+    slide1Title: 'Free Home Delivery in Mau on Orders ₹299+',
+    slide1Desc: 'Order groceries, staples & daily essentials directly on WhatsApp. Fast doorstep delivery across Sahadatpura & Mau.',
+    slide1Cta: 'Start Shopping',
+    slide2Tag: 'Wholesale & Family Packs',
+    slide2Title: 'Save More on Atta, Rice, Oils, Pulses & Spices',
+    slide2Desc: 'Special store rates & bulk discounts for monthly household ration, hostels & events.',
+    slide2Cta: 'Browse Categories',
+    slide3Tag: 'Quick WhatsApp Order',
+    slide3Title: '1,600+ Live Products · Easy Store Pickup or Delivery',
+    slide3Desc: 'Filter by Category, Subcategory, or Brand in seconds and send your cart straight to 9278224984.',
+    slide3Cta: 'Chat on WhatsApp',
+    footerSub: 'Proprietor: Amar Gupta · By Pass Road, Sahadatpura, Mau',
+    footerDisc: 'Prices shown reflect store rates & MRP. Final bill amount confirmed before delivery or pickup.'
+  },
+  hi: {
+    langBtn: 'EN',
+    searchPlaceholder: 'राशन, ब्रांड, बारकोड या कैटेगरी खोजें…',
+    searchMobilePlaceholder: 'प्रोडक्ट, ब्रांड या बारकोड खोजें…',
+    allPill: '🛒 सभी',
+    allItemsRail: 'सभी सामान',
+    allAisles: 'सभी कैटेगरी',
+    brandLabel: 'ब्रांड:',
+    allBrands: 'सभी ब्रांड',
+    filterAll: 'सभी (उपलब्ध पहले)',
+    filterInStock: 'उपलब्ध (In Stock)',
+    filterOffers: 'ऑफर / छूट',
+    filterOos: 'स्टॉक खत्म',
+    sortDefault: 'क्रम: उपलब्ध पहले',
+    sortLow: 'दाम: कम से ज़्यादा',
+    sortHigh: 'दाम: ज़्यादा से कम',
+    sortAz: 'नाम: A → Z',
+    sortZa: 'नाम: Z → A',
+    shopByCat: 'कैटेगरी के अनुसार खरीदें',
+    shopByCatSub: 'सब-कैटेगरी और ब्रांड देखने के लिए किसी भी कैटेगरी पर टैप करें',
+    allProducts: 'सभी प्रोडक्ट्स',
+    inStockBadge: '● उपलब्ध है',
+    outStockBadge: '● स्टॉक नहीं है',
+    soldOutBadge: 'स्टॉक खत्म',
+    addBtn: 'जोड़ें +',
+    soldOutBtn: 'खत्म',
+    askRate: 'रेट पूछें',
+    addToCart: 'कार्ट में जोड़ें',
+    shareProduct: 'प्रोडक्ट शेयर करें',
+    yourCart: 'आपका कार्ट',
+    cartEmpty: 'आपका कार्ट खाली है',
+    cartEmptySub: 'ऑर्डर शुरू करने के लिए सामान जोड़ें',
+    homeDelivery: 'होम डिलीवरी',
+    storePickup: 'स्टोर पिकअप',
+    yourNamePh: 'आपका नाम *',
+    addressPh: 'मऊ में घर / गली / नज़दीकी पहचान *',
+    sendWaBtn: 'व्हाट्सएप पर ऑर्डर भेजें',
+    estTotal: 'अनुमानित कुल राशि',
+    pastOrders: 'पिछले ऑर्डर',
+    reorderBtn: 'दोबारा ऑर्डर करें',
+    recentViewed: 'हाल ही में देखे गए',
+    wholesaleTitle: 'थोक (Wholesale) या शादी-ब्याह के लिए सामान चाहिए?',
+    wholesaleSub: 'बड़े ऑर्डर, हॉस्टल और कार्यक्रमों के लिए विशेष थोक रेट पाएं। सीधे व्हाट्सएप पर संपर्क करें।',
+    wholesaleBtn: 'थोक रेट पूछें',
+    deliveryNoticeHtml: '<strong>होम डिलीवरी सूचना:</strong> मऊ में <strong>₹299</strong> या उससे अधिक के ऑर्डर पर फ्री होम डिलीवरी (स्टोर पिकअप पर कोई न्यूनतम सीमा नहीं)।',
+    slide1Tag: 'उसी दिन होम डिलीवरी',
+    slide1Title: 'मऊ में ₹299+ के ऑर्डर पर फ्री होम डिलीवरी',
+    slide1Desc: 'राशन, आटा, दाल, तेल और रोज़मर्रा का सामान सीधे व्हाट्सएप पर मंगाएं। सहादतपुरा व पूरे मऊ में तेज़ डिलीवरी।',
+    slide1Cta: 'खरीदारी शुरू करें',
+    slide2Tag: 'थोक एवं फैमिली पैक',
+    slide2Title: 'आटा, चावल, तेल, दाल और मसालों पर ज़्यादा बचत',
+    slide2Desc: 'महीने के राशन, हॉस्टल और आयोजनों के लिए विशेष स्टोर रेट और छूट।',
+    slide2Cta: 'कैटेगरी देखें',
+    slide3Tag: 'आसान व्हाट्सएप ऑर्डर',
+    slide3Title: '1,600+ लाइव प्रोडक्ट्स · आसान पिकअप या डिलीवरी',
+    slide3Desc: 'कैटेगरी या ब्रांड चुनें और अपना कार्ट सीधे 9278224984 पर भेजें।',
+    slide3Cta: 'व्हाट्सएप पर बात करें',
+    footerSub: 'प्रोप्राइटर: अमर गुप्ता · बाई पास रोड, सहादतपुरा, मऊ',
+    footerDisc: 'दिखाए गए दाम स्टोर रेट और MRP पर आधारित हैं। अंतिम बिल डिलीवरी या पिकअप से पहले कन्फर्म किया जाएगा।'
+  }
+};
+
+function t(key) {
+  return (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key;
+}
+
+function applyLanguage() {
+  const lbl = document.getElementById('langToggleLabel');
+  if (lbl) lbl.textContent = t('langBtn');
+
+  const sDesk = document.getElementById('searchInput');
+  if (sDesk) sDesk.placeholder = t('searchPlaceholder');
+  const sMob = document.getElementById('searchInputMobile');
+  if (sMob) sMob.placeholder = t('searchMobilePlaceholder');
+
+  const delNotice = document.querySelector('#deliveryNoticeBar .delivery-notice-left span');
+  if (delNotice) delNotice.innerHTML = t('deliveryNoticeHtml');
+
+  const slides = document.querySelectorAll('.promo-slide');
+  if (slides.length >= 3) {
+    slides[0].querySelector('.promo-tag').innerHTML = `<i class="fa-solid fa-truck-fast"></i> ${t('slide1Tag')}`;
+    slides[0].querySelector('.promo-title').textContent = t('slide1Title');
+    slides[0].querySelector('.promo-desc').textContent = t('slide1Desc');
+    slides[0].querySelector('.promo-cta').innerHTML = `${t('slide1Cta')} <i class="fa-solid fa-arrow-right"></i>`;
+
+    slides[1].querySelector('.promo-tag').innerHTML = `<i class="fa-solid fa-tags"></i> ${t('slide2Tag')}`;
+    slides[1].querySelector('.promo-title').textContent = t('slide2Title');
+    slides[1].querySelector('.promo-desc').textContent = t('slide2Desc');
+    slides[1].querySelector('.promo-cta').innerHTML = `${t('slide2Cta')} <i class="fa-solid fa-grid-2"></i>`;
+
+    slides[2].querySelector('.promo-tag').innerHTML = `<i class="fa-brands fa-whatsapp"></i> ${t('slide3Tag')}`;
+    slides[2].querySelector('.promo-title').textContent = t('slide3Title');
+    slides[2].querySelector('.promo-desc').textContent = t('slide3Desc');
+    slides[2].querySelector('.promo-cta').innerHTML = `${t('slide3Cta')} <i class="fa-brands fa-whatsapp"></i>`;
+  }
+
+  const catTitle = document.querySelector('#categories .section-title');
+  if (catTitle) catTitle.textContent = t('shopByCat');
+  const catSub = document.querySelector('#categories .section-sub');
+  if (catSub) catSub.textContent = t('shopByCatSub');
+
+  const brandLbl = document.querySelector('.brand-filter-label');
+  if (brandLbl) brandLbl.innerHTML = `<i class="fa-solid fa-tag"></i> ${t('brandLabel')}`;
+
+  const fAll = document.querySelector('[data-filter="all"]');
+  if (fAll) fAll.textContent = t('filterAll');
+  const fIn = document.querySelector('[data-filter="instock"]');
+  if (fIn) fIn.textContent = t('filterInStock');
+  const fSale = document.querySelector('[data-filter="sale"]');
+  if (fSale) fSale.textContent = t('filterOffers');
+  const fOos = document.querySelector('[data-filter="outofstock"]');
+  if (fOos) fOos.textContent = t('filterOos');
+
+  const sortSel = document.getElementById('sortSelect');
+  if (sortSel && sortSel.options.length >= 5) {
+    sortSel.options[0].text = t('sortDefault');
+    sortSel.options[1].text = t('sortLow');
+    sortSel.options[2].text = t('sortHigh');
+    sortSel.options[3].text = t('sortAz');
+    sortSel.options[4].text = t('sortZa');
+  }
+
+  const recTitle = document.querySelector('#recentSection .section-title');
+  if (recTitle) recTitle.textContent = t('recentViewed');
+
+  const wsTitle = document.querySelector('.wholesale-text h2');
+  if (wsTitle) wsTitle.textContent = t('wholesaleTitle');
+  const wsSub = document.querySelector('.wholesale-text p');
+  if (wsSub) wsSub.textContent = t('wholesaleSub');
+  const wsBtn = document.getElementById('wholesaleBtn');
+  if (wsBtn) wsBtn.innerHTML = `<i class="fa-brands fa-whatsapp"></i> ${t('wholesaleBtn')}`;
+
+  const fSub = document.getElementById('footerSubText');
+  if (fSub) fSub.textContent = t('footerSub');
+  const fDisc = document.querySelector('.footer-disclaimer');
+  if (fDisc) fDisc.textContent = t('footerDisc');
+
+  if (allProducts.length) {
+    buildCategoryNav();
+    buildTaxonomyBars();
+    updateTitle();
+    applyFiltersAndRender();
+  }
+}
+
+function toggleLanguage() {
+  currentLang = currentLang === 'en' ? 'hi' : 'en';
+  localStorage.setItem('mm_lang', currentLang);
+  applyLanguage();
+  showToast(currentLang === 'hi' ? '🇮🇳 भाषा: हिंदी चुनी गई' : '🌐 Language: English selected');
+}
+
 const MAIN_CAT_ICONS = {
   'GROCERY & KITCHEN':         ['🌾', '🌶️', '🫙', '🫘', '🍚', '🧂'],
   'PERSONAL CARE':             ['🧼', '🧴', '🪥', '💇', '🌸', '✨'],
@@ -164,6 +383,7 @@ let isDark            = localStorage.getItem('mm_dark') === 'true';
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
   applyDarkMode();
+  applyLanguage();
   initPromoCarousel();
   bindUI();
   initProducts(false);
@@ -478,7 +698,7 @@ function buildCategoryNav() {
   const cats = getAllCategories();
   const navInner = document.getElementById('catNav').querySelector('.cat-nav-inner');
   navInner.innerHTML = '';
-  navInner.appendChild(makeMainPill('ALL', `🛒 All (${allProducts.length})`));
+  navInner.appendChild(makeMainPill('ALL', `${t('allPill')} (${allProducts.length})`));
   cats.forEach(cat => {
     navInner.appendChild(makeMainPill(cat, `${getCatIcon(cat)} ${cat}`));
   });
@@ -571,14 +791,14 @@ function buildTaxonomyBars() {
   const subs = Object.entries(subMeta).sort((a, b) => b[1].inStock - a[1].inStock || b[1].total - a[1].total);
 
   if (sidebarHeader) {
-    sidebarHeader.textContent = activeCategory === 'ALL' ? 'All Aisles' : activeCategory;
+    sidebarHeader.textContent = activeCategory === 'ALL' ? t('allAisles') : activeCategory;
   }
 
   let railHtml = `
     <button class="sub-rail-item${activeSubcategory === 'ALL' ? ' active' : ''}" data-sub="ALL">
       <div class="sub-rail-icon">${activeCategory === 'ALL' ? '🛒' : getCatIcon(activeCategory)}</div>
       <div class="sub-rail-text">
-        <span class="sub-rail-name">All Items</span>
+        <span class="sub-rail-name">${t('allItemsRail')}</span>
         <span class="sub-rail-count">${catProds.length}</span>
       </div>
     </button>`;
@@ -613,7 +833,7 @@ function buildTaxonomyBars() {
   const brands = Object.entries(brandCounts).sort((a, b) => b[1] - a[1]);
 
   let brandHtml = `<button class="brand-pill${activeBrand === 'ALL' ? ' active' : ''}" data-brand="ALL">
-    All Brands (${scoped.length})
+    ${t('allBrands')} (${scoped.length})
   </button>`;
   brands.forEach(([b, count]) => {
     brandHtml += `<button class="brand-pill${activeBrand === b ? ' active' : ''}" data-brand="${escHtml(b)}">
@@ -846,7 +1066,7 @@ function createProductCard(p) {
            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"
            alt="${escHtml(p.title)}" loading="lazy" />
       ${!inStock
-        ? '<span class="product-card-badge product-card-badge--oos">Out of Stock</span>'
+        ? `<span class="product-card-badge product-card-badge--oos">${t('soldOutBadge')}</span>`
         : hasSale
           ? `<span class="product-card-badge product-card-badge--sale">Save ₹${saveAmt}</span>`
           : ''}
@@ -860,10 +1080,10 @@ function createProductCard(p) {
       ${p.packSize ? `<span class="product-card-pack">${escHtml(p.packSize)}</span>` : ''}
       <div class="product-card-avail ${!inStock ? 'out-stock' : lowStock ? 'low-stock' : 'in-stock'}">
         ${!inStock
-          ? '● Out of Stock'
+          ? t('outStockBadge')
           : lowStock
             ? `● Only ${p.stock_quantity} left`
-            : '● In Stock'}
+            : t('inStockBadge')}
       </div>
     </div>
     <div class="product-card-price-row" data-footer="${escHtml(p.id)}">
@@ -874,7 +1094,7 @@ function createProductCard(p) {
       ${inCart > 0
         ? blinkitStepperHTML(inCart)
         : `<button class="btn-blinkit-add" ${!inStock ? 'disabled' : ''}>
-             ${inStock ? 'ADD' : 'Sold Out'}
+             ${inStock ? t('addBtn') : t('soldOutBtn')}
            </button>`}
     </div>`;
 
@@ -944,7 +1164,7 @@ function refreshCardFooter(id) {
     ${qty > 0
       ? blinkitStepperHTML(qty)
       : `<button class="btn-blinkit-add" ${!p.inStock ? 'disabled' : ''}>
-           ${p.inStock ? 'ADD' : 'Sold Out'}
+           ${p.inStock ? t('addBtn') : t('soldOutBtn')}
          </button>`}`;
 
   bindCardActionEvents(card, p);
@@ -1261,7 +1481,7 @@ function updateTitle() {
   } else if (activeCategory !== 'ALL') {
     el.textContent = `${getCatIcon(activeCategory)} ${activeCategory}`;
   } else {
-    el.textContent = 'All Products';
+    el.textContent = t('allProducts');
   }
 }
 
@@ -1336,6 +1556,9 @@ function bindUI() {
 
   const loadMoreBtn = document.getElementById('loadMoreBtn');
   if (loadMoreBtn) loadMoreBtn.addEventListener('click', renderNextPage);
+
+  const langToggleBtn = document.getElementById('langToggleBtn');
+  if (langToggleBtn) langToggleBtn.addEventListener('click', toggleLanguage);
 
   const darkToggle = document.getElementById('darkToggle');
   if (darkToggle) darkToggle.addEventListener('click', toggleDarkMode);
@@ -1462,12 +1685,20 @@ function renderCartPanel() {
           <i class="fa-solid fa-store"></i> Store Pickup
         </button>
       </div>
-      <input id="coName" class="co-input" type="text" placeholder="Your name *" value="${escHtml(savedName)}" />
-      <div id="coAddressWrap" style="display:block;">
-        <textarea id="coAddress" class="co-input" rows="2" placeholder="Delivery address in Mau *" style="resize:none;">${escHtml(savedAddress)}</textarea>
+      <input id="coName" class="co-input" type="text" placeholder="${escHtml(t('yourNamePh'))}" value="${escHtml(savedName)}" />
+      <div id="coAddressWrap" style="display:flex;flex-direction:column;gap:6px;">
+        <div class="locality-chips" id="localityChips">
+          <button type="button" class="locality-chip" data-loc="Sahadatpura, Mau">Sahadatpura</button>
+          <button type="button" class="locality-chip" data-loc="By Pass Road, Mau">By Pass Road</button>
+          <button type="button" class="locality-chip" data-loc="Ghazipur Tiraha, Mau">Ghazipur Tiraha</button>
+          <button type="button" class="locality-chip" data-loc="Azamgarh Mod, Mau">Azamgarh Mod</button>
+          <button type="button" class="locality-chip" data-loc="Munshipura, Mau">Munshipura</button>
+          <button type="button" class="locality-chip" data-loc="Ballia Mod, Mau">Ballia Mod</button>
+        </div>
+        <textarea id="coAddress" class="co-input" rows="2" placeholder="${escHtml(t('addressPh'))}" style="resize:none;">${escHtml(savedAddress)}</textarea>
       </div>
       <button id="waOrderBtn" class="btn btn-wa btn-full">
-        <i class="fa-brands fa-whatsapp"></i> Send Order via WhatsApp
+        <i class="fa-brands fa-whatsapp"></i> ${escHtml(t('sendWaBtn'))}
       </button>`;
 
     let deliveryMode = 'delivery';
@@ -1487,6 +1718,15 @@ function renderCartPanel() {
       coAddressWrap.style.display = mode === 'delivery' ? 'block' : 'none';
     };
 
+    footer.querySelectorAll('.locality-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const loc = chip.dataset.loc;
+        if (coAddress && !coAddress.value.includes(loc)) {
+          coAddress.value = coAddress.value.trim() ? `${coAddress.value.trim()}, ${loc}` : loc;
+          localStorage.setItem('mm_cust_address', coAddress.value.trim());
+        }
+      });
+    });
     btnDelivery.addEventListener('click', () => setMode('delivery'));
     btnPickup.addEventListener('click',   () => setMode('pickup'));
 
@@ -1504,6 +1744,11 @@ function renderCartPanel() {
       if (deliveryMode === 'delivery' && !address) { coAddress.classList.add('error'); coAddress.focus(); return; }
 
       localStorage.setItem('mm_cust_name', name);
+      try {
+        const hist = JSON.parse(localStorage.getItem('mm_order_history') || '[]');
+        hist.unshift({ date: new Date().toLocaleDateString('en-IN'), items: cart.map(x => ({ id: x.id, qty: x.qty })), total: sum });
+        localStorage.setItem('mm_order_history', JSON.stringify(hist.slice(0, 8)));
+      } catch (err) {}
       if (deliveryMode === 'delivery') localStorage.setItem('mm_cust_address', address);
 
       const lines = cart.map(i =>

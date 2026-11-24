@@ -3,7 +3,7 @@
    Cache visited pages + assets for offline
    ============================================= */
 
-const CACHE_NAME = 'maya-mart-v6';
+const CACHE_NAME = 'maya-mart-v7';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -11,6 +11,7 @@ const STATIC_ASSETS = [
   '/js/app.js',
   '/manifest.json',
   '/MAYA MART LOGO GREEN.png',
+  '/MAYA MART LOGO WHITE.png',
   '/MAYA MART LOGO RED.png',
   '/MAYA MART ICON.png',
   '/favicon.png',
