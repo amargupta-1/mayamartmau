@@ -100,11 +100,10 @@ function getIconForProduct(category, productId, productTitle) {
 function getCatFallbackSvg(category, productId, productTitle) {
   const icon = productId ? getIconForProduct(category, productId, productTitle) : getCatIcon(category);
   const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'>
-    <rect width='200' height='200' fill='%23fff0f0' rx='16'/>
+    <rect width='200' height='200' fill='%23eaf7ef' rx='16'/>
     <text x='100' y='115' font-size='72' text-anchor='middle' dominant-baseline='middle'>${icon}</text>
   </svg>`;
-  return `data:image/svg+xml,${svg.replace(/
-\s*/g, ' ')}`;
+  return `data:image/svg+xml,${svg.replace(/\n\s*/g, ' ')}`;
 }
 
 // Build prioritized image chain for <Marg_ID>.webp from amargupta-1/mayamart-images
@@ -275,7 +274,7 @@ function injectMobileCartBar() {
     </button>
     <button class="btn btn-outline" id="mobileWishBtn" style="flex:1;justify-content:center;gap:8px;">
       <i class="fa-regular fa-heart"></i>
-      Wishlist <span class="mobile-cart-bar-count" id="mobileWishCount" style="background:var(--red)">0</span>
+      Wishlist <span class="mobile-cart-bar-count" id="mobileWishCount" style="background:var(--gold)">0</span>
     </button>`;
   document.body.appendChild(bar);
 
@@ -1508,24 +1507,12 @@ function renderCartPanel() {
       if (deliveryMode === 'delivery') localStorage.setItem('mm_cust_address', address);
 
       const lines = cart.map(i =>
-        `• ${i.title}${i.packSize ? ' (' + i.packSize + ')' : ''}
-  ID: ${i.id} | Qty: ${i.qty}${i.price > 0 ? ` | ₹${i.price} × ${i.qty} = ₹${i.price * i.qty}` : ''}`
-      ).join('
-');
+        `• ${i.title}${i.packSize ? ' (' + i.packSize + ')' : ''}\n  ID: ${i.id} | Qty: ${i.qty}${i.price > 0 ? ` | ₹${i.price} × ${i.qty} = ₹${i.price * i.qty}` : ''}`
+      ).join('\n');
       const orderType = deliveryMode === 'delivery' ? 'Home Delivery 🚚' : 'Store Pickup 🏪';
-      const addrLine  = deliveryMode === 'delivery' ? `
-Address: ${address}` : '';
-      const minNote   = (deliveryMode === 'delivery' && sum < minOrd) ? `
-_(Note: Order is under ₹${minOrd} free-delivery threshold)_` : '';
-      const msg = `🛒 *Maya Mart Order*
-
-Order Type: ${orderType}
-Name: ${name}${addrLine}
-
-*My Order:*
-${lines}
-
-${sum > 0 ? `*Estimated Total: ₹${sum}*` : 'Please confirm prices.'}${minNote}`;
+      const addrLine  = deliveryMode === 'delivery' ? `\nAddress: ${address}` : '';
+      const minNote   = (deliveryMode === 'delivery' && sum < minOrd) ? `\n_(Note: Order is under ₹${minOrd} free-delivery threshold)_` : '';
+      const msg = `🛒 *Maya Mart Order*\n\nOrder Type: ${orderType}\nName: ${name}${addrLine}\n\n*My Order:*\n${lines}\n\n${sum > 0 ? `*Estimated Total: ₹${sum}*` : 'Please confirm prices.'}${minNote}`;
 
       window.open(`https://wa.me/${CONFIG.WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
     });
